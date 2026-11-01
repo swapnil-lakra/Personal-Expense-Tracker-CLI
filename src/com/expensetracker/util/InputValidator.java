@@ -86,4 +86,92 @@ public class InputValidator {
 
         return date;
     }
+
+    public int readMenuChoice(int min,int max){
+        if(min > max){
+            throw new IllegalArgumentException("min cannot exceed max");
+        }
+
+        while(true){
+            System.out.println("Enter your choices ("+min+"-"+max+"): ");
+            String input = scanner.nextLine().trim();
+            if(input.isEmpty()){
+                System.out.println("[ERROR] Input cannot be empty.");
+                continue;
+            }
+
+            int choice;
+            try {
+                choice = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("[ERROR] Please enter a valid number.");
+                continue;
+            }
+
+            if(choice < min || choice > max){
+                System.out.println("[ERROR] Choice must be between "+min+" and "+max+".");
+                continue;
+            }
+
+            return choice;
+        }
+    }
+
+    public int readExpenseId(String prompt){
+        while (true) {
+            System.out.println(prompt);
+            String input = scanner.nextLine().trim();
+            
+            if(input.isEmpty()){
+                System.out.println("[ERROR] Expense ID must be a number");
+                continue;
+            }
+
+            int id;
+
+            try {
+                id = Integer.parseInt(input);
+            } catch (NumberFormatException e) {
+                System.out.println("[ERROR] Expense ID must be a number.");
+                continue;
+            }
+
+            if(id <= 0){
+                System.out.println("[ERROR] Expense ID must be positive number.");
+                continue;
+            }
+            return id;
+        }
+    }
+
+    public String readDescription(String prompt){
+        while(true){
+            System.out.println(prompt);
+            String input = scanner.nextLine().trim();
+
+            if(input.length() > AppConstants.MAX_DESCRIPTION_LENGTH){
+                System.out.println("[ERROR] Description cannot exceed "+AppConstants.MAX_DESCRIPTION_LENGTH+" characters. Current: "+input.length());
+                continue;
+            }
+
+            return input;
+        }
+    }
+
+    public boolean readConfirmation(String prompt){
+        while (true) {
+            System.out.println(prompt);
+            String input = scanner.nextLine().trim().toLowerCase();
+
+            if(input.equals("y") || input.equals("yes")){
+                return true;
+            }else if(input.equals("n") || input.equals("no")){
+                return false;
+            }
+
+            System.out.println("[ERROR] Please enter 'y' or 'n'.");
+        }
+    }
+
+    
 }
