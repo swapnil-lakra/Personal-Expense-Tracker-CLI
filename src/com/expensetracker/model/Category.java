@@ -16,7 +16,7 @@ public enum Category {
         this.displayName = displayName;
     }
 
-    Category fromChoice(int choice) throws InvalidCategoryException {
+    public static Category fromChoice(int choice) throws InvalidCategoryException {
         Category[] all = values();
         if(choice < 0 || choice > all.length){
             throw new InvalidCategoryException("Invalid category choice. Please select a number between 1 and "+all.length);
@@ -24,11 +24,11 @@ public enum Category {
         return Category.values()[choice-1];
     }
 
-     String displayName(){
+    public String displayName(){
         return this.displayName;
      }
 
-    Category[] getAllChoices(){
+    public static Category[] getAllChoices(){
         return values();
     }
 
