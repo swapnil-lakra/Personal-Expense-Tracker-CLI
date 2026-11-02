@@ -37,11 +37,13 @@ package com.expensetracker.ui;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.List;
 
 
 import com.expensetracker.constants.AppConstants;
 import com.expensetracker.util.ConsoleUtil;
 import com.expensetracker.model.Category;
+import com.expensetracker.model.Expense;
 
 public class Menu {
     public Menu(){}
@@ -49,6 +51,7 @@ public class Menu {
     private static final DateTimeFormatter MONTH_FORMATTER = 
             DateTimeFormatter.ofPattern("MMM yyyy",Locale.ENGLISH);
     
+    // Navigation menu (display only)        
     public void showMainMenu(){
         ConsoleUtil.printHeader(AppConstants.APP_NAME + " " + AppConstants.VERSION);
         System.out.println("1. Add Expense");
@@ -114,5 +117,20 @@ public class Menu {
         ConsoleUtil.printLine();
     }
 
+    // Message helpers
+    public void showSuccess(String message){
+        System.out.println("[OK] " + message);
+    }
 
+    public void showError(String message){
+        System.out.println("[ERROR] " + message);
+    }
+
+    public void showInfo(String message){
+        System.out.println("[INFO] " + message);
+    }
+
+    
+
+    
 }
