@@ -39,7 +39,9 @@ import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 import com.expensetracker.constants.AppConstants;
@@ -117,6 +119,105 @@ public class Menu {
         System.out.println("4. Update Description");
         System.out.println("5. Cancel");
         ConsoleUtil.printLine();
+    }
+
+    // Expense Display
+    public void showExpenseTable(List<Expense> expenses, String title){
+        ConsoleUtil.printHeader(title);
+
+        if(expenses == null || expenses.isEmpty()){
+            showInfo("No expenses to display");
+            return;
+        }
+
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+        System.out.printf("%-8s %-12s %-16s %-12s %s%n","ID",
+        "Date","Category","Amount","Description");
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+
+        double total = 0.0;
+        for(Expense e : expenses){
+            String desc = (e.getDescription() == null || 
+            e.getDescription().isEmpty()) ? "-" : 
+            e.getDescription();
+            
+            System.out.printf("%-8d %-12s %-16s %12s %s%n",
+                e.getId(), ConsoleUtil.formatDate(e.getDate()),
+                e.getCategory().displayName(), 
+                ConsoleUtil.formatAmount(e.getAmount()),
+                desc
+            );
+
+            total += e.getAmount();
+        }
+
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+        System.out.println("Total: " + ConsoleUtil.formatAmount(total) 
+        + " (" + expenses.size() + " expense(s))");
+    }
+
+    public void showExpenseTable(List<Expense> expenses){
+        showExpenseTable(expenses,"ALL EXPENSES");
+    }
+
+    public void showTopExpenses(List<Expense> topExpenses){
+        int count = (topExpenses == null || topExpenses.isEmpty()) ? 0 : topExpenses.size();
+        showExpenseTable(topExpenses,"TOP "+count+" HIGHEST EXPENSES");
+    }
+
+    // Report Display
+    public void showCategoryReport(Map<Category,Double> categoryTotal, double total){
+        ConsoleUtil.printHeader("CATEGORY-WISE BREAKDOWN");
+
+        if(categoryTotal == null || categoryTotal.isEmpty()){
+            showInfo("No expenses recorded yet.");
+            return;
+        }
+
+        List<Map.Entry<Category, Double>> entries = 
+        new ArrayList<>(categoryTotal.entrySet());
+
+        entries.sort(Map.Entry.<Category, Double>comparingByKey().reversed());
+
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+        for(Map.Entry<Category, Double> entry : entries){
+            double pct = (total > 0) ? (entry.getValue() / total) * 100.0 : 0.0;
+
+            System.out.printf("%-16s %14s %8s%n",
+                entry.getKey().displayName(),
+                ConsoleUtil.formatAmount(entry.getValue()),
+                ConsoleUtil.formatPercentage(pct));
+        }
+
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+        System.out.printf("%-16s %14s %8s%n",
+            "TOTAL",
+            ConsoleUtil.formatAmount(total),
+            ConsoleUtil.formatPercentage(100.0)
+        );
+    }
+
+    public void showMonthlyReport(Map<String, Double> monthlyTotal, double total){
+        ConsoleUtil.printHeader("MONTHLY REPORT");
+
+        if(monthlyTotal == null || monthlyTotal.isEmpty()){
+            showInfo("No expenses recorded yet.");
+            return;
+        }
+
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+        for(Map.Entry<String,Double> entry : monthlyTotal.entrySet()){
+            System.out.printf("%-16s %14%n",
+                prettyMonth(entry.getKey()),
+                ConsoleUtil.formatAmount(entry.getValue())
+            );
+        }
+
+        ConsoleUtil.printLine(AppConstants.MENU_SEPARATOR_LENGTH,'-');
+        System.out.printf("%-16s %14s%n",
+            "TOTAL",
+            ConsoleUtil.formatAmount(total)
+        );
     }
 
     // Message helpers
