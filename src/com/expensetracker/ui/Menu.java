@@ -35,8 +35,10 @@ package com.expensetracker.ui;
 // +-------------------------------------------------------------------+
 // 
 
+import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
+import java.util.Scanner;
 import java.util.List;
 
 
@@ -130,7 +132,24 @@ public class Menu {
         System.out.println("[INFO] " + message);
     }
 
-    
+    public void pressEnterToContinue(Scanner scanner){
+        System.out.println("Press Enter to continue...");
+        try {
+            scanner.nextLine();
+        } catch (Exception e) {
+            
+        }
+    }
+
+    // Private Helpers
+    private String prettyMonth(String key){
+        try {
+            YearMonth ym = YearMonth.parse(key);
+            return ym.format(MONTH_FORMATTER);
+        } catch (Exception e) {
+            return key;
+        }
+    }
 
     
 }
