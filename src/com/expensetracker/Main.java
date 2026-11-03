@@ -43,7 +43,7 @@ public class Main {
                 case 3: handleSearch(); break;
                 case 4: handleUpdate(); break;
                 case 5: handleDelete(); break;
-                //case 6: handleReport(); break;
+                case 6: handleReport(); break;
                 //case 7: handleSort(); break;
                 case 8: running = false; break;
                 default:
@@ -162,6 +162,70 @@ public class Main {
         }
         pause();
     }
+
+    private void handleReport(){
+        while(true){
+            menu.showReportMenu();
+            int choice = validator.readMenuChoice(1, 7);
+            switch(choice){
+                case 1: reportTotal(); break;
+                case 2: reportCategoryWise(); break;
+                case 3: reportMonthy(); break;
+                case 4: reportDateRange(); break;
+                case 5: reportTopExpense(); break;
+                case 6: reportAverage(); break;
+                case 7: return; // back to main menu
+            }
+            pause();
+        }
+    }
+
+    // === report sub-handlers ===
+    private void reportTotal(){
+        double total = manager.getTotal();
+        ConsoleUtil.printHeader("TOTAL SPENDING");
+        menu.showInfo("Total spent: "+ConsoleUtil.formatAmount(total) + 
+                       " across " + manager.getAllExpenses().size() + " expense(s).");
+    }
+
+    private void reportCategoryWise(){
+        Map<Category,Double> categoryTotals = manager.getCategoryWiseTotal();
+        double total = manager.getTotal();
+        menu.showCategoryReport(categoryTotals, total);
+    }
+
+    private void reportMonthy(){
+        Map<String,Double> monthlyTotals = manager.getMonthlyReport();
+        double total = manager.getTotal();
+        menu.showMonthlyReport(monthlyTotals, total);
+    }
+
+    private void reportDateRange(){
+        try {
+            LocalDate from = validator.readDate("Enter FROM date (dd-MM-yyyy)");
+            LocalDate to = validator.readDate("Enter TO date (dd-MM-yyyy)");
+            if(from.isAfter(to)){
+                menu.showError("From date cannot be after To date.");
+                return;
+            }
+            List<Expense> result = manager.filterByDateRange(from, to);
+            menu.showExpenseTable(result, "EXPENSES FROM "+ConsoleUtil.formatDate(from)+" TO "+ConsoleUtil.formatDate(to));
+        } catch (InvalidDateException ex) {
+            menu.showError(ex.getMessage());
+        }
+    }
+
+    private void reportTopExpense(){
+        List<Expense> top = manager.getTopNExpenses(AppConstants.TOP_EXPENSES_COUNT);
+        menu.showTopExpenses(top);
+    }
+
+    private void reportAverage(){
+        double avg = manager.getAverageExpense();
+        ConsoleUtil.printHeader("AVERAGE EXPENSE");
+        menu.showInfo("Average per expense: "+ConsoleUtil.formatAmount(avg));
+    }
+
 
     // === Update sub-handlers ===
     private void updateAmount(int id){
