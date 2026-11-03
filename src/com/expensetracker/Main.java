@@ -44,7 +44,7 @@ public class Main {
                 case 4: handleUpdate(); break;
                 case 5: handleDelete(); break;
                 case 6: handleReport(); break;
-                //case 7: handleSort(); break;
+                case 7: handleSort(); break;
                 case 8: running = false; break;
                 default:
                     menu.showError("Invalid Choice.");
@@ -177,6 +177,32 @@ public class Main {
                 case 7: return; // back to main menu
             }
             pause();
+        }
+    }
+
+    private void handleSort() {
+        menu.showSortMenu();
+        int choice = validator.readMenuChoice(1, 7);
+        switch (choice) {
+            case 1: performSort("DATE", true); break;
+            case 2: performSort("DATE", false); break;
+            case 3: performSort("AMOUNT", true); break;
+            case 4: performSort("AMOUNT", false); break;
+            case 5: performSort("CATEGORY", true); break;
+            case 6: performSort("CATEGORY", false); break;
+            case 7: return; // back
+        }
+        pause();
+    }
+
+    // === Sort helper ===
+    private void performSort(String field, boolean ascending) {
+        try {
+            List<Expense> sorted = manager.sortBy(field, ascending);
+            String direction = ascending ? "ASC" : "DESC";
+            menu.showExpenseTable(sorted, "SORTED BY " + field + " (" + direction + ")");
+        } catch (IllegalArgumentException ex) {
+            menu.showError("Sort failed: " + ex.getMessage());
         }
     }
 
