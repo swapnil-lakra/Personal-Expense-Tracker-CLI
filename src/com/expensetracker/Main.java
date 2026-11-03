@@ -41,7 +41,7 @@ public class Main {
                 case 1: handleAddExpense(); break;
                 case 2: handleViewAll(); break;
                 case 3: handleSearch(); break;
-                //case 4: handleUpdate(); break;
+                case 4: handleUpdate(); break;
                 //case 5: handleDelete(); break;
                 //case 6: handleReport(); break;
                 //case 7: handleSort(); break;
@@ -99,6 +99,82 @@ public class Main {
             }
         }
     }
+
+    private void handleUpdate(){
+        ConsoleUtil.printHeader("UPDATE HEADER");
+
+        List<Expense> list = manager.getAllExpenses();
+        if(list.isEmpty()){
+            menu.showInfo("No Expenses to update.");
+            pause();
+            return;
+        }
+        
+        menu.showExpenseTable(list,"AVAILABLE EXPENSES");
+
+        int id = validator.readExpenseId("Enter expense ID to update: ");
+
+        try {
+            manager.getExpenseById(id);
+        } catch (ExpenseNotFoundException ex) {
+            menu.showError(ex.getMessage());
+            pause();
+            return;
+        }
+
+        menu.showUpdateFieldMenu();
+        int choice = validator.readMenuChoice(1, 5);
+        switch(choice){
+            case 1: updateAmount(id); break;
+            case 2: updateCategory(id); break;
+            case 3: updateDate(id); break;
+            case 4: updateDescription(id); break;
+            case 5: menu.showInfo("Update cancelled."); break;
+        }
+        pause();
+    }
+
+    // === Update sub-handlers ===
+    private void updateAmount(int id){
+        try {
+            double newAmount = validator.readAmount("Enter new amount (Rs.): ");
+            manager.updateExpense(id, "AMOUNT", newAmount);
+            menu.showSuccess("Amount updated successfully.");
+        } catch (InvalidAmountException | ExpenseNotFoundException ex) {
+            menu.showError(ex.getMessage());
+        }
+    }
+
+    private void updateCategory(int id){
+        try {
+            menu.showCategoryMenu();
+            Category newCategory = validator.readCategory();
+            manager.updateExpense(id, "CATEGORY", newCategory);
+            menu.showSuccess("Category updated successfully.");
+        } catch (InvalidCategoryException | ExpenseNotFoundException ex) {
+            menu.showError(ex.getMessage());
+        }
+    }
+
+    private void updateDate(int id){
+        try{
+            LocalDate newDate = validator.readDate("Enter new date (dd-MM-yyyy): ");
+            manager.updateExpense(id, "DATE", newDate);
+            menu.showSuccess("Date updated successfully.");
+        }catch(InvalidDateException | ExpenseNotFoundException ex){
+            menu.showError(ex.getMessage());
+        }
+    }
+
+    private void updateDescription(int id){
+        try {
+            String newDesc = validator.readDescription("Enter new description: ");
+            manager.updateExpense(id, "DESCRIPTION", newDesc);
+            menu.showSuccess("Description updated successfully.");
+        } catch (ExpenseNotFoundException ex) {
+            menu.showError(ex.getMessage());
+        }
+    } 
 
     // === Search sub-handlers ===
 
@@ -163,6 +239,8 @@ public class Main {
             pause();
         }
     }
+
+
 
 
 
