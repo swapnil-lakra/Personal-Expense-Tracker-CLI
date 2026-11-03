@@ -42,7 +42,7 @@ public class Main {
                 case 2: handleViewAll(); break;
                 case 3: handleSearch(); break;
                 case 4: handleUpdate(); break;
-                //case 5: handleDelete(); break;
+                case 5: handleDelete(); break;
                 //case 6: handleReport(); break;
                 //case 7: handleSort(); break;
                 case 8: running = false; break;
@@ -130,6 +130,35 @@ public class Main {
             case 3: updateDate(id); break;
             case 4: updateDescription(id); break;
             case 5: menu.showInfo("Update cancelled."); break;
+        }
+        pause();
+    }
+
+    private void handleDelete(){
+        ConsoleUtil.printHeader("DELETE EXPENSE");
+        int id = validator.readExpenseId("Enter expense ID to delete: ");
+
+        //preview first
+        try {
+            Expense expense = manager.getExpenseById(id);
+            menu.showExpenseTable(Collections.singletonList(expense),"EXPENSE TO DELETE");
+        } catch (ExpenseNotFoundException ex) {
+            menu.showError(ex.getMessage());
+            pause();
+            return;
+        }
+
+        boolean confirm = validator.readConfirmation("Are you sure you want to delete? (y/n): ");
+        if(!confirm){
+            menu.showInfo("Delete cancelled");
+            pause();
+            return;
+        }
+
+        if(manager.deleteExpense(id)){
+            menu.showSuccess("Expense deleted successfully.");
+        }else{
+            menu.showError("Delete failed - expense not found.");
         }
         pause();
     }
