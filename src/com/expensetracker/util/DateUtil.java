@@ -10,7 +10,7 @@ import com.expensetracker.exception.InvalidDateException;
 
 public final class DateUtil {
     private static final DateTimeFormatter FORMATTER = 
-            DateTimeFormatter.ofPattern(AppConstants.DATE_FORMAT).withResolverStyle(ResolverStyle.STRICT);
+            DateTimeFormatter.ofPattern(AppConstants.DATE_FORMAT);
     private DateUtil(){}
 
     public static LocalDate parse(String input) throws InvalidDateException {
