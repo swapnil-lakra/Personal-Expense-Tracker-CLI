@@ -66,7 +66,7 @@ public class ExpenseManager {
     public boolean deleteExpense(int id){
         Expense removed = expenseById.remove(id);
         if(removed == null) return false;
-        expenses.remove(removed.getId());
+        expenses.remove(removed);
         return true;
     }
 
