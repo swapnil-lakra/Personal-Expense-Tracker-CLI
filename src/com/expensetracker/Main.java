@@ -10,6 +10,14 @@ import com.expensetracker.constants.AppConstants;
 import com.expensetracker.model.*;
 import com.expensetracker.exception.*;
 
+/**
+ * Entry point and application controller for the Personal Expense Tracker.
+ *
+ * This class coordinates the console-based user interface, input validation,
+ * expense management operations, and report generation. Business logic is
+ * delegated to {@link ExpenseManager}, while presentation and user interaction
+ * are handled by {@link Menu} and {@link InputValidator}.
+ */
 public class Main {
 
     private final Scanner scanner;
@@ -18,6 +26,13 @@ public class Main {
     private final Menu menu;
     private boolean running;
 
+    /**
+     * Initializes the application components and prepares the console session.
+     *
+     * Creates the shared scanner, expense manager, input validator, and menu
+     * instance. The application is marked as running so the main menu can be
+     * displayed.
+     */
     public Main(){
         this.scanner = new Scanner(System.in);
         this.manager = new ExpenseManager();
@@ -27,11 +42,23 @@ public class Main {
     }
 
     // Entry Point
+    /**
+     * Launches the Personal Expense Tracker application.
+     *
+     * @param args command-line arguments (not used by this application)
+     */
     public static void main(String[] args) {
         Main app = new Main();
         app.run();
     }
 
+    /**
+     * Runs the main application loop until the user chooses to exit.
+     *
+     * Displays the main menu, validates the selected option, and delegates
+     * each operation to its corresponding handler. Performs application
+     * cleanup after the loop ends.
+     */
     private void run(){
         while(running){
             menu.showMainMenu();
@@ -54,6 +81,11 @@ public class Main {
     }
 
     // Cleanup and farewell.
+    /**
+     * Performs application shutdown tasks and displays the farewell message.
+     *
+     * Closes the console scanner after the user exits the application.
+     */
     private void shutdown(){
         ConsoleUtil.printHeader("THANK YOU");
         menu.showSuccess("Goodbye! Have a great day.");
@@ -62,6 +94,12 @@ public class Main {
 
     // === Main Menu Handlers ===
 
+    /**
+     * Collects expense details, validates the input, and creates a new expense.
+     *
+     * Handles invalid amount, category, and date inputs without terminating
+     * the application.
+     */
     private void handleAddExpense(){
         ConsoleUtil.printHeader("ADD NEW EXPENSE");
         try {
@@ -80,12 +118,21 @@ public class Main {
         pause();
     }
 
+    /**
+     * Retrieves and displays all expenses currently stored by the manager.
+     */
     private void handleViewAll(){
         List<Expense> list = manager.getAllExpenses();
         menu.showExpenseTable(list);
         pause();
     }
 
+    /**
+     * Displays the search submenu and dispatches the selected search operation.
+     *
+     * The submenu remains active until the user chooses to return to the
+     * main menu.
+     */
     private void handleSearch(){
         while(true){
             menu.showSearchMenu();
@@ -100,6 +147,12 @@ public class Main {
         }
     }
 
+    /**
+     * Coordinates the expense update workflow.
+     *
+     * Checks whether expenses exist, displays available records, validates
+     * the selected expense ID, and delegates the requested field update.
+     */
     private void handleUpdate(){
         ConsoleUtil.printHeader("UPDATE HEADER");
 
@@ -134,6 +187,12 @@ public class Main {
         pause();
     }
 
+    /**
+     * Deletes an expense after displaying its details and obtaining confirmation.
+     *
+     * The selected record is previewed before deletion to reduce accidental
+     * data removal.
+     */
     private void handleDelete(){
         ConsoleUtil.printHeader("DELETE EXPENSE");
         int id = validator.readExpenseId("Enter expense ID to delete: ");
@@ -163,6 +222,11 @@ public class Main {
         pause();
     }
 
+    /**
+     * Displays the reports submenu and dispatches the selected report operation.
+     *
+     * Returns to the main menu when the user selects the exit option.
+     */
     private void handleReport(){
         while(true){
             menu.showReportMenu();
@@ -180,6 +244,11 @@ public class Main {
         }
     }
 
+    /**
+     * Presents the available sorting options and executes the selected sort.
+     *
+     * Supports ascending and descending order for date, amount, and category.
+     */
     private void handleSort() {
         menu.showSortMenu();
         int choice = validator.readMenuChoice(1, 7);
@@ -196,6 +265,12 @@ public class Main {
     }
 
     // === Sort helper ===
+    /**
+     * Sorts expenses by the requested field and displays the resulting records.
+     *
+     * @param field the expense field used for sorting (DATE, AMOUNT, or CATEGORY)
+     * @param ascending {@code true} for ascending order; {@code false} for descending
+     */
     private void performSort(String field, boolean ascending) {
         try {
             List<Expense> sorted = manager.sortBy(field, ascending);
@@ -207,6 +282,9 @@ public class Main {
     }
 
     // === report sub-handlers ===
+    /**
+     * Calculates and displays total spending and the number of recorded expenses.
+     */
     private void reportTotal(){
         double total = manager.getTotal();
         ConsoleUtil.printHeader("TOTAL SPENDING");
@@ -214,18 +292,29 @@ public class Main {
                        " across " + manager.getAllExpenses().size() + " expense(s).");
     }
 
+    /**
+     * Generates and displays the total spending grouped by expense category.
+     */
     private void reportCategoryWise(){
         Map<Category,Double> categoryTotals = manager.getCategoryWiseTotal();
         double total = manager.getTotal();
         menu.showCategoryReport(categoryTotals, total);
     }
 
+    /**
+     * Generates and displays the monthly expense summary.
+     */
     private void reportMonthy(){
         Map<String,Double> monthlyTotals = manager.getMonthlyReport();
         double total = manager.getTotal();
         menu.showMonthlyReport(monthlyTotals, total);
     }
 
+    /**
+     * Prompts for a date range and displays expenses recorded within that period.
+     *
+     * Rejects a range in which the start date occurs after the end date.
+     */
     private void reportDateRange(){
         try {
             LocalDate from = validator.readDate("Enter FROM date (dd-MM-yyyy)");
@@ -241,11 +330,20 @@ public class Main {
         }
     }
 
+    /**
+     * Retrieves and displays the highest-value expenses.
+     *
+     * The number of records is controlled by
+     * {@link AppConstants#TOP_EXPENSES_COUNT}.
+     */
     private void reportTopExpense(){
         List<Expense> top = manager.getTopNExpenses(AppConstants.TOP_EXPENSES_COUNT);
         menu.showTopExpenses(top);
     }
 
+    /**
+     * Calculates and displays the average amount per recorded expense.
+     */
     private void reportAverage(){
         double avg = manager.getAverageExpense();
         ConsoleUtil.printHeader("AVERAGE EXPENSE");
@@ -254,6 +352,11 @@ public class Main {
 
 
     // === Update sub-handlers ===
+    /**
+     * Reads and applies a new amount to the specified expense.
+     *
+     * @param id unique identifier of the expense to update
+     */
     private void updateAmount(int id){
         try {
             double newAmount = validator.readAmount("Enter new amount (Rs.): ");
@@ -264,6 +367,11 @@ public class Main {
         }
     }
 
+    /**
+     * Reads and applies a new category to the specified expense.
+     *
+     * @param id unique identifier of the expense to update
+     */
     private void updateCategory(int id){
         try {
             menu.showCategoryMenu();
@@ -275,6 +383,11 @@ public class Main {
         }
     }
 
+    /**
+     * Reads and applies a new date to the specified expense.
+     *
+     * @param id unique identifier of the expense to update
+     */
     private void updateDate(int id){
         try{
             LocalDate newDate = validator.readDate("Enter new date (dd-MM-yyyy): ");
@@ -285,6 +398,11 @@ public class Main {
         }
     }
 
+    /**
+     * Reads and applies a new description to the specified expense.
+     *
+     * @param id unique identifier of the expense to update
+     */
     private void updateDescription(int id){
         try {
             String newDesc = validator.readDescription("Enter new description: ");
@@ -297,6 +415,9 @@ public class Main {
 
     // === Search sub-handlers ===
 
+    /**
+     * Filters expenses by a user-selected category and displays the matches.
+     */
     private void searchByCategory(){
         try {
             menu.showCategoryMenu();
@@ -309,6 +430,11 @@ public class Main {
         }
     }
 
+    /**
+     * Filters expenses by an inclusive start and end date and displays the matches.
+     *
+     * Validates that the start date is not later than the end date.
+     */
     private void searchByDateRange(){
         try {
             LocalDate from = validator.readDate("Enter FROM date (dd-MM-yyyy): ");
@@ -326,6 +452,11 @@ public class Main {
         }
     }
 
+    /**
+     * Searches expense descriptions using a keyword entered by the user.
+     *
+     * Blank keywords are rejected before the manager is called.
+     */
     private void searchByKeyword(){
         System.out.print("Enter Keyword to search in description: ");
         String keyword = scanner.nextLine().trim();
@@ -338,6 +469,11 @@ public class Main {
         displayExpenses(result, "EXPENSES MATCHING '" + keyword + "'");
     }
 
+    /**
+     * Filters expenses whose amounts fall within the user-specified range.
+     *
+     * Rejects a minimum amount greater than the maximum amount.
+     */
     private void searchByAmountRange(){
         try {
             double min = validator.readAmount("Enter MIN amount (Rs.): ");
@@ -359,19 +495,22 @@ public class Main {
         }
     }
 
-
-
-
-
     // === Display helpers ===
+    /**
+     * Displays the supplied expense records using the requested table title.
+     *
+     * @param list expense records to display
+     * @param title heading shown above the expense table
+     */
     private void displayExpenses(List<Expense> list, String title){
         menu.showExpenseTable(list,title);
         pause();
     }
 
+    /**
+     * Waits for the user to press Enter before continuing the console workflow.
+     */
     private void pause(){
         menu.pressEnterToContinue(scanner);
     }
-
-
 }
