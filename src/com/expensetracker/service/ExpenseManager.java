@@ -24,7 +24,7 @@ public class ExpenseManager {
     }
 
     public Expense addExpense(double amount,Category category, LocalDate date, String description){
-        Expense expense = new Expense(nextId, amount, category, date, description);
+        Expense expense = new Expense(nextId++, amount, category, date, description);
         expenses.add(expense);
         expenseById.put(expense.getId(), expense);
         return expense;
