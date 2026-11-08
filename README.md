@@ -113,6 +113,42 @@ com.expensetracker
 
 ---
 
+## 🖥️ Application Screenshots
+
+Explore the application's console interface and see how its core features work through the screenshots below.
+
+### Main Menu
+![Main Menu](screenshots/Main%20menu.png)
+
+### Expense Management
+
+**Add Expense**
+
+![Add Expense](screenshots/Add%20expense.png)
+
+**View All Expenses**
+
+![All Expenses](screenshots/All%20expenses.png)
+
+**Delete Expense**
+
+![Delete Expense](screenshots/Delete%20expense.png)
+
+### Additional Features
+
+The following folders contain screenshots demonstrating the application's remaining functionality:
+
+- [Search & Filter Expenses](screenshots/Search%20%7C%20Filter%20expenses/)
+- [Update Expenses](screenshots/Update%20Expenses/)
+- [Sort Expenses](screenshots/Sort%20Expenses/)
+- [Reports & Analytics](screenshots/Reports%20and%20Analytics/)
+
+### Exit Application
+
+![Exit Application](screenshots/Exit.png)
+
+---
+
 ## 🖥️ Sample Usage
 
 ```
